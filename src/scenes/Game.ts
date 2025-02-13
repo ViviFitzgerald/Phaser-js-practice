@@ -59,13 +59,21 @@ export class Game extends Scene {
         })
 
         this.physics.add.collider(this.stars, this.platforms);
-       
+
         this.player = this.physics.add.sprite(100, 450, 'dude');
 
         this.player.setBounce(0.2);
         this.player.setCollideWorldBounds(true);
 
         this.physics.add.collider(this.player, this.platforms);
+
+        this.physics.add.overlap(
+            this.player,
+            this.stars,
+            (player: any, star: any) => {star.disableBody(true, true); }, 
+            undefined, 
+            this
+        );
 
         this.anims.create({
             key: 'left',
