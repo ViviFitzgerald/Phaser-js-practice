@@ -5,8 +5,10 @@ export class Game extends Scene {
     player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
     cursors: Phaser.Types.Input.Keyboard.CursorKeys;
     stars: Phaser.Physics.Arcade.Group;
+    bombs: Phaser.Physics.Arcade.Group;
     score = 0;
     scoreText: any;
+    gameOver = false;
 
     constructor() {
         super('Game');
@@ -57,15 +59,27 @@ export class Game extends Scene {
             star.setBounceY(Phaser.Math.FloatBetween(0.4,0.8));
             return null;
         })
-
+        this.bombs = this.physics.add.Group();
+       
         this.physics.add.collider(this.stars, this.platforms);
+        this.physics.add.collider(this.bombs, this.platforms)
+        this.physics.add.collider(this.player, this.platforms);
+        this.physics.add.collider(
+            this.player, 
+            this.bombs,
+            (player: any, bombs: any) => {
+                this.physics.pause();
+                player.setTint(0xf0000);
+                player.anims.play ('turn');
+                this.gameOver = true;
+             })
 
         this.player = this.physics.add.sprite(100, 450, 'dude');
 
         this.player.setBounce(0.2);
         this.player.setCollideWorldBounds(true);
 
-        this.physics.add.collider(this.player, this.platforms);
+        
 
         this.physics.add.overlap(
             this.player,
